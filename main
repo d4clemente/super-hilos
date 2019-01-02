@@ -4,3 +4,4 @@
 #include <semaphore.h>
 
 #define STD_CLIENTS 20
+main
