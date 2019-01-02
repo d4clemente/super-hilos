@@ -4,7 +4,7 @@
 #include <semaphore.h>
 #include <time.h>
 #include <stdlib.h>
-3include <math.h>
+#include <math.h>
 
 #define STD_CLIENTS 20
 int i;
