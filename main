@@ -92,12 +92,12 @@ void *thread_handler(){
   //guardamos el time una vez atendido y sacamos el tiempo de espera
     time2 = time(NULL);
     //obtenemos la diferencia de tiempos en segundos
-    waiting_time = (int) (difftime(time2,time1) * 1000);
+    waiting_time = (difftime(time2,time1));
     array_time[aux] = waiting_time;
     m_time += waiting_time;
     printf("Cliente %d atendido\n", aux);
     //tiempo de pagado
-    tiempo = rand() % (5+1-1)+1;
+    tiempo = rand() % (7+1-2)+2;
     sleep(tiempo);
   //termina de atenderle el cajero: desbloqueamos
   pthread_mutex_unlock(&array_mutex[box]);
