@@ -95,17 +95,16 @@ void *thread_handler(){
     j++;
   }
   array_cajas[j]=1;
-  pthread_mutex_unlock(&mutex);
+  //Aqui estaba antes el mutex_unlock
   printf("Cliente %d asignado a caja %d\n", aux,j);
   //competimos por nuestra caja asiganda, de manera que si esta libre entraremos a pagar tardando un tiempo de time (detallado mas adelante)
-
-  
   //guardamos el time una vez atendido y sacamos el tiempo de espera
    time2 = time(NULL);
    //obtenemos la diferencia de tiempos en segundos
    waiting_time = (difftime(time2,time1));
    array_time[aux] = waiting_time;
    m_time += waiting_time;
+   pthread_mutex_unlock(&mutex);
    printf("Cliente %d atendido\n", aux);
     //tiempo de pagado
     tiempo = rand() % (7+1-2)+2;
