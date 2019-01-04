@@ -110,9 +110,9 @@ void *thread_handler(){
     tiempo = rand() % (7+1-2)+2;
     sleep(tiempo);
   //termina de atenderle el cajero: desbloqueamos
-  pthread_mutex_lock(&mutex);
+  pthread_mutex_lock(&mutex);//Tiempo de espera?
   array_cajas[j] = 0;
-  sem_post(&libres);
+  sem_post(&libres);//Dentro o fuera del mutex
   pthread_mutex_unlock(&mutex);
   printf("Cliente %d saliendo despues de esperar %d\n", aux, array_time[aux]);
   pthread_exit(NULL);
