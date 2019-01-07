@@ -78,7 +78,6 @@ void *thread_handler(){
   double waiting_time;
   int aux = id++;//variable local que guarda el valor en ese instante de la variable static "id"
   //id++;//aumentamos el valor de la variable static "id"
-                                                //para el id necesarios & o *???
   printf("Cliente %d realizando compra\n",aux);
   //tiempo de compra, simplemente hasces sleep con ese tiempo antes de entrar a la cola
   tiempo = rand() % (10+1-2)+2;
@@ -86,19 +85,19 @@ void *thread_handler(){
   //asignamos una caja de forma aleatoria
   box = rand() % (cajas - 0) + 0;
   printf("Cliente %d asignado a caja %d\n", aux,box);
-  //competimos por nuestra caja asiganda, de manera que si esta libre entraremos a pagar tardando un tiempo de time (detallado mas adelante)
+  //competimos por nuestra caja asignada, de manera que si esta libre entraremos a pagar tardando un tiempo de time
   time1 = time(NULL);
   pthread_mutex_lock(&array_mutex[box]);
   //guardamos el time una vez atendido y sacamos el tiempo de espera
-    time2 = time(NULL);
-    //obtenemos la diferencia de tiempos en segundos
-    waiting_time = (int) (difftime(time2,time1) * 1000);
-    array_time[aux] = waiting_time;
-    m_time += waiting_time;
-    printf("Cliente %d atendido\n", aux);
-    //tiempo de pagado
-    tiempo = rand() % (6+1-2)+2;
-    sleep(tiempo);
+  time2 = time(NULL);
+  //obtenemos la diferencia de tiempos en milisegundos
+  waiting_time = (int) (difftime(time2,time1) * 1000);
+  array_time[aux] = waiting_time;
+  m_time += waiting_time;
+  printf("Cliente %d atendido\n", aux);
+  //tiempo de pagado
+  tiempo = rand() % (6+1-2)+2;
+  sleep(tiempo);
   //termina de atenderle el cajero: desbloqueamos
   pthread_mutex_unlock(&array_mutex[box]);
   printf("Cliente %d saliendo despues de esperar %d\n", aux, array_time[aux]);
