@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
     cajas = atoi(argv[1]);
     clients = atoi(argv[2]);
   }
-  printf("Clientes: %d Cajas: %d\n",clients, cajas);
+  printf("Clientes: %d cajas: %d\n",clients, cajas);
   //inicializando los arrays dinamicos en función de los tamaños necesarios
   array_threads = (pthread_t*) malloc(clients * sizeof(pthread_t)); 
   array_mutex = (pthread_mutex_t*) malloc(cajas * sizeof(pthread_mutex_t));
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
     des_time += pow(((double)array_time[i]-m_time),2);
   }
   des_time = sqrt(des_time/clients);
-  printf("Supermercado cerrado.\nTiempo medio de espera: %f ms\nDesviación típica del tiempo medio de espera: %f ms\n", m_time*1000, des_time*1000);
+  printf("Supermercado cerrado.\nTiempo medio de espera: %f\nDesviación típica del tiempo medio de espera: %f\n", m_time, des_time);
   
   //cerramos los mutex y liberamos la memoria dinamica antes de acabar
   for(i = 0; i<cajas; i++){
@@ -77,14 +77,14 @@ void *thread_handler(){
   time_t time1, time2;
   double waiting_time;
   int aux = id++;//variable local que guarda el valor en ese instante de la variable static "id"
-                                              
+  //id++;//aumentamos el valor de la variable static "id"
+                                                //para el id necesarios & o *???
   printf("Cliente %d realizando compra\n",aux);
   //tiempo de compra, simplemente hasces sleep con ese tiempo antes de entrar a la cola
-  tiempo = rand() % 10-2;
+  tiempo = rand() % (10+1-2)+2;
   sleep(tiempo);
-  
   //asignamos una caja de forma aleatoria
-  box = rand() % cajas;
+  box = rand() % (cajas - 0) + 0;
   printf("Cliente %d asignado a caja %d\n", aux,box);
   //competimos por nuestra caja asiganda, de manera que si esta libre entraremos a pagar tardando un tiempo de time (detallado mas adelante)
   time1 = time(NULL);
@@ -92,16 +92,15 @@ void *thread_handler(){
   //guardamos el time una vez atendido y sacamos el tiempo de espera
     time2 = time(NULL);
     //obtenemos la diferencia de tiempos en segundos
-    waiting_time = (difftime(time2,time1));
+    waiting_time = (int) (difftime(time2,time1) * 1000);
     array_time[aux] = waiting_time;
     m_time += waiting_time;
     printf("Cliente %d atendido\n", aux);
     //tiempo de pagado
-    tiempo = rand() % 6-2;
+    tiempo = rand() % (6+1-2)+2;
     sleep(tiempo);
   //termina de atenderle el cajero: desbloqueamos
   pthread_mutex_unlock(&array_mutex[box]);
-  
-  printf("Cliente %d saliendo despues de esperar %d ms\n", aux, array_time[aux]*1000);
+  printf("Cliente %d saliendo despues de esperar %d\n", aux, array_time[aux]);
   pthread_exit(NULL);
 }
