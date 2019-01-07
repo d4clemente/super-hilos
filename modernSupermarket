@@ -41,7 +41,6 @@ int main(int argc, char* argv[]){
   array_threads = (pthread_t*) malloc(clients * sizeof(pthread_t)); 
   array_cajas = (int*) malloc(cajas * sizeof(int));
   array_time = (int*) malloc(clients * sizeof(int));
-  //inicializamos las variables "time" y "box" para usarlas mediante la función rand
   srand(time(NULL));
   
   //inicializamos las cajas dentro de cada posición de "array_cajas"
@@ -84,10 +83,10 @@ void *thread_handler(){
   int aux = id++;//variable local que guarda el valor en ese instante de la variable static "id"
                                               
   printf("Cliente %d realizando compra\n",aux);
-  //tiempo de compra, simplemente hasces sleep con ese tiempo antes de entrar a la cola
+  //tiempo de compra, simplemente haces sleep con ese tiempo antes de entrar a la cola
   tiempo = rand() % (10+1-2)+2;
   sleep(tiempo);
-  time1 = time(NULL);//COMPROBAR
+  time1 = time(NULL);
   //asignamos una caja de forma aleatoria
   sem_wait(&libres);
   pthread_mutex_lock(&mutex);
@@ -95,13 +94,10 @@ void *thread_handler(){
     j++;
   }
   array_cajas[j]=1;
-  //Aqui estaba antes el mutex_unlock
-  //printf("Cliente %d asignado a caja %d\n", aux,j);
-  //competimos por nuestra caja asiganda, de manera que si esta libre entraremos a pagar tardando un tiempo de time (detallado mas adelante)
   //guardamos el time una vez atendido y sacamos el tiempo de espera
    time2 = time(NULL);
    //obtenemos la diferencia de tiempos en segundos
-   waiting_time = (difftime(time2,time1));
+   waiting_time = (int)(difftime(time2,time1)*1000);
    array_time[aux] = waiting_time;
    m_time += waiting_time;
    pthread_mutex_unlock(&mutex);
@@ -109,11 +105,11 @@ void *thread_handler(){
     //tiempo de pagado
     tiempo = rand() % (6+1-2)+2;
     sleep(tiempo);
-  //termina de atenderle el cajero: desbloqueamos
-  pthread_mutex_lock(&mutex);//Tiempo de espera?
+  //Competimos otra vez por el mutex para indicar que la caja en la que estabamos queda libre
+  pthread_mutex_lock(&mutex);
   array_cajas[j] = 0;
-  sem_post(&libres);//Dentro o fuera del mutex
+  sem_post(&libres);
   pthread_mutex_unlock(&mutex);
-  printf("Cliente %d saliendo despues de esperar %d ms\n", aux, array_time[aux]*1000);
+  printf("Cliente %d saliendo despues de esperar %d ms\n", aux, array_time[aux]);
   pthread_exit(NULL);
 }
